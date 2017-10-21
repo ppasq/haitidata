@@ -90,9 +90,38 @@
 		    </div>
 		    {% endverbatim %}
 		</div>
+    <div class="row">
+			<h2>{% blocktrans %}Latest Datasets{% endblocktrans %}</h2>
+		    {% verbatim %}
+		    <div ng-app="base">
+		      <div ng-repeat="item in base | limitTo:4">
+	  			<div class="col-md-3">
+	  				<a href="{{ item.detail_url }}"><img ng-src="{{ item.thumbnail_url }}" /></a>
+	  				<h4>{{ item.title }}</h4>
+	  			</div>
+		      </div>
+		    </div>
+		    {% endverbatim %}
+		</div>
 		<p><a href="/search/">{% blocktrans %}Explore all datasets{% endblocktrans %}</a></p>
 	</div>
 </section>
 {% endblock %}
 
 {% endblock %}
+
+{% block extra_script %}
+{{ block.super }}
+<script type="text/javascript">
+    LATEST_URL = '{% url 'api_dispatch_list' api_name='api' resource_name='base' %}'
+    'use strict';
+    (function(){
+      var module = angular.module('base', []);
+      module.run(function($http, $rootScope){
+        $http.get(LATEST_URL).success(function(data){
+          $rootScope.base = data.objects;
+        });
+      });
+    })();
+</script>
+{% endblock extra_script %}
